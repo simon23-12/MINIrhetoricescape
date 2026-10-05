@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Rhetoric Escape">
+<meta name="theme-color" content="#0c0a20">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="Rhetoric Escape – a platformer where you save Princess Prosa from Warerio by solving riddles about stylistic devices.">
+<title>Rhetoric Escape</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-mode="title">
+<div id="stage">
+  <canvas id="game" width="800" height="448" aria-label="Rhetoric Escape game canvas"></canvas>
+
+  <!-- top-right buttons -->
+  <div id="tools">
+    <button id="bMap" class="tool hidden" title="Back to map" aria-label="Back to map">🗺️</button>
+    <button id="bCodex" class="tool hidden" title="Codex of stylistic devices" aria-label="Codex">📖</button>
+    <button id="bMute" class="tool" title="Sound on/off" aria-label="Sound on/off">🔊</button>
+  </div>
+
+  <!-- title -->
+  <div id="title" class="overlay">
+    <div class="logo"><span>RHETORIC</span><span class="l2">ESCAPE</span></div>
+    <div class="tagline">Save Princess Prosa from Warerio!</div>
+    <div class="menu">
+      <button id="btnNew" class="btn big">▶ New Game</button>
+      <button id="btnCont" class="btn">Continue</button>
+      <button id="btnCodex" class="btn ghost">📖 Codex</button>
+    </div>
+    <div class="how">← → / A D move · Space / ↑ jump · Shift run · 1–4 answer</div>
+  </div>
+
+  <!-- story -->
+  <div id="story" class="overlay dim hidden">
+    <div class="card story">
+      <h2>The Kidnapping</h2>
+      <p>Princess Prosa was reading in the Royal Garden when… <b>ZAP!</b> The evil <b>Warerio</b>, the Word-Thief, snatched her away to his <b>Castle of Clichés</b>!</p>
+      <p><i>“Ha ha ha! Without rhetoric nobody can talk their way out of MY castle!”</i></p>
+      <p>Only <b>Rhetorio</b> can save her. Cross <b>seven levels</b>. At the end of each world a <b>Riddle Gate</b> blocks the way – solve its riddle about stylistic devices to pass. Grab <b>Wisdom Scrolls 📜</b> for a 50:50 hint!</p>
+      <button id="btnGo" class="btn big">Let’s go!</button>
+    </div>
+  </div>
+
+  <!-- riddle -->
+  <div id="riddle" class="overlay dim hidden">
+    <div class="card riddle">
+      <div class="rhead"><span id="rtag" class="rtag"></span><span id="rhearts" class="rhearts"></span></div>
+      <div id="rtext" class="rtext"></div>
+      <div id="ropts" class="opts"></div>
+      <div id="rfb" class="rfb"></div>
+      <div class="rfoot">
+        <button id="rscroll" class="btn small">📜 Wisdom Scroll ×<span id="rscrolln">0</span> (50:50)</button>
+        <button id="rnext" class="btn small hidden">Continue ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- fail -->
+  <div id="fail" class="overlay dim hidden">
+    <div class="card small">
+      <h2 id="failTitle">Out of ink!</h2>
+      <p id="failText"></p>
+      <div class="row"><button id="btnRetry" class="btn big">↻ Try again</button><button id="btnFailMap" class="btn ghost">🗺️ Map</button></div>
+    </div>
+  </div>
+
+  <!-- win -->
+  <div id="win" class="overlay dim hidden">
+    <div class="card small">
+      <h2>👑 Princess Prosa is FREE! 👑</h2>
+      <p id="winText"></p>
+      <div class="row"><button id="btnWinCodex" class="btn">📖 Codex</button><button id="btnWinMap" class="btn big">🗺️ Back to map</button></div>
+    </div>
+  </div>
+
+  <!-- codex -->
+  <div id="codex" class="overlay dim hidden">
+    <div class="card codex">
+      <div class="rhead"><span class="rtag">📖 CODEX OF STYLISTIC DEVICES</span><button id="btnCodexClose" class="btn small">✕ Close</button></div>
+      <div id="codexList" class="clist"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+</div>
+
+<!-- touch controls (outside the stage so they can sit in the free space below the game) -->
+  <div id="touch">
+    <div class="tgroup dpad" id="dpad" aria-label="Move left / right">
+      <div class="tbtn" id="dpL">◀</div>
+      <div class="tbtn" id="dpR">▶</div>
+    </div>
+    <div class="tgroup">
+      <button class="tbtn small on" id="runBtn" aria-label="Run on/off">RUN</button>
+      <button class="tbtn jump" data-key="Space" aria-label="Jump">▲</button>
+    </div>
+  </div>
+<div id="rotate">↻ Tip: turn your iPad to landscape for a bigger game</div>
+<noscript><p style="color:#fff;text-align:center;margin-top:30vh">Please enable JavaScript to play Rhetoric Escape.</p></noscript>
+<script src="riddles.js"></script>
+<script src="levels.js"></script>
+<script src="render.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
