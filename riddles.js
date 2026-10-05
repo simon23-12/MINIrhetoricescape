@@ -12,9 +12,6 @@ const DEVICES = {
   personification: { name: 'Personification',     icon: '🌳', def: 'Things, animals or ideas are described as if they were human and could act like people.', ex: 'The wind whispered through the trees.' },
   hyperbole:       { name: 'Hyperbole',           icon: '🎈', def: 'Extreme exaggeration for effect – it is not meant to be taken literally.', ex: 'I’m so hungry I could eat a horse!' },
   onomatopoeia:    { name: 'Onomatopoeia',        icon: '💥', def: 'A word that imitates the sound it describes.', ex: 'Bang! Splash! Sizzle!' },
-  oxymoron:        { name: 'Oxymoron',            icon: '☯️', def: 'Two contradictory words are combined into one expression.', ex: 'Deafening silence, bittersweet, jumbo shrimp.' },
-  irony:           { name: 'Irony',               icon: '🙃', def: 'What happens (or is said) is the opposite of what you would expect or what is meant.', ex: 'A fire station burns down.' },
-  rhetorical:      { name: 'Rhetorical Question', icon: '❓', def: 'A question asked for effect, not because an answer is expected.', ex: 'Who doesn’t love pizza?' },
 };
 
 /* Two riddles per level – one of them is picked at random each time.
@@ -55,8 +52,9 @@ const LEVEL_RIDDLES = [
   ]
 ];
 
-/* Boss battle: seven riddle spells, one per bar of the Cage of Clichés.
-   Rounds 1-3 revisit the "easy" devices of the classic riddle gates, 4-6 introduce new ones, 7 is a final review. */
+/* Boss battle: one riddle spell per bar of the Cage of Clichés.
+   Four rounds = four bars on the cage; the last one is a final review.
+   (Easy to extend: add more riddles – the cage, rounds and difficulty adapt automatically.) */
 const BOSS_RIDDLES = [
   { device: 'personification',
     taunt: 'My castle groans, my walls whisper… can you hear them?',
@@ -73,21 +71,6 @@ const BOSS_RIDDLES = [
     q: '<i>Bang! Splash! Sizzle! Buzz!</i><br>My words sound just like the noises they name.<br><b>Which device am I?</b>',
     correct: 'Onomatopoeia', wrong: ['Alliteration', 'Metaphor', 'Hyperbole'],
     hint: 'Say the word out loud – does it SOUND like the thing it describes?' },
-  { device: 'oxymoron',
-    taunt: 'Hear the DEAFENING SILENCE of your defeat!',
-    q: 'Warerio snarls: <i>“Taste the BITTERSWEET end of your quest!”</i><br>Two opposite words are squeezed together in my name.<br><b>Which device am I?</b>',
-    correct: 'Oxymoron', wrong: ['Simile', 'Alliteration', 'Onomatopoeia'],
-    hint: 'Two words that contradict each other, side by side.' },
-  { device: 'irony',
-    taunt: 'Fire station on fire? How… unexpected!',
-    q: 'A fire station burns to the ground. A dentist has the worst teeth in town.<br>What happens is the opposite of what we expect.<br><b>Which device am I?</b>',
-    correct: 'Irony', wrong: ['Hyperbole', 'Personification', 'Metaphor'],
-    hint: 'Expectation and reality clash!' },
-  { device: 'rhetorical',
-    taunt: 'Who could ever defeat the mighty Warerio?',
-    q: '<i>“Who wouldn’t want to save a princess?” “Are you kidding me?”</i><br>I ask, but I never wait for an answer.<br><b>Which device am I?</b>',
-    correct: 'Rhetorical Question', wrong: ['Simile', 'Onomatopoeia', 'Alliteration'],
-    hint: 'A question – but nobody expects a real answer.' },
   { device: 'metaphor',
     taunt: 'This is my FINAL spell! Tremble!',
     q: 'Warerio roars his final threat:<br><i>“Your courage is a tiny candle in my mighty storm!”</i><br><b>Which device is he using?</b>',
@@ -95,6 +78,6 @@ const BOSS_RIDDLES = [
     hint: 'Is there a “like” or “as”? Or is one thing simply called another?' }
 ];
 
-const BOSS_HIT_LINES = ['OW! My poor Personification!', 'That hurt a MILLION times!', 'CRASH! BANG! …OUCH!', 'Oww! That was… terribly good!', 'Oh, how… unexpected. (Irony!)', 'Who dares to hurt the mighty Warerio?!', 'NOOOO! Not my storm!'];
+const BOSS_HIT_LINES = ['OW! My poor Personification!', 'That hurt a MILLION times!', 'CRASH! BANG! …OUCH!', 'NOOOO! Not my storm!'];
 
 if (typeof module !== 'undefined') module.exports = { DEVICES, LEVEL_RIDDLES, BOSS_RIDDLES };

@@ -1,6 +1,6 @@
 # 👑 Rhetoric Escape
 
-**Save Princess Prosa from the evil Warerio!** A Mario-World-style platformer for English class in which pupils solve riddles about **stylistic devices**. Short enough for a lesson starter (about 10–15 minutes): three quick levels (alliteration, simile, metaphor) and then straight to Warerio’s castle, where the boss battle revisits personification, hyperbole and onomatopoeia and adds oxymoron, irony and rhetorical questions.
+**Save Princess Prosa from the evil Warerio!** A Mario-World-style platformer for English class in which pupils solve riddles about **stylistic devices**. Short enough for a lesson starter (about 10–15 minutes): three quick levels (alliteration, simile, metaphor) and then straight to Warerio’s castle, where the boss battle adds personification, hyperbole and onomatopoeia and ends with a metaphor review.
 
 No installation, no build step, no dependencies – plain HTML5 canvas + vanilla JavaScript. Works on desktop, tablets and phones (touch controls appear automatically).
 
@@ -27,12 +27,12 @@ Open `index.html` in a browser, or play it on GitHub Pages: **https://simon23-12
 
 ### 🧙 The boss battle: Warerio and the Cage of Clichés
 
-Warerio hovers on a storm cloud above the throne room and keeps Princess Prosa in a cage with **seven bars – one for every riddle spell**.
+Warerio hovers on a storm cloud above the throne room and keeps Princess Prosa in a cage with **four bars – one for every riddle spell**.
 
 1. **Dodge phase** – Warerio lobs *Dull Words* (BORING, BLAND, YAWN…) at you. Every bomb shows a red warning marker where it will land; later rounds add ink waves you have to jump and double volleys.
-2. **Riddle spell** – when the timer runs out Warerio casts a riddle: personification, hyperbole, onomatopoeia, oxymoron, irony, rhetorical question, and a final metaphor test.
+2. **Riddle spell** – when the timer runs out Warerio casts a riddle: personification, hyperbole, onomatopoeia, and a final metaphor test.
 3. **Strike back** – a correct answer throws a golden *Rhetoric Star* labelled with the device, shatters one bar of the cage and hurts Warerio. A wrong answer costs a heart.
-4. After the seventh bar the cage crashes down, the princess runs out, and Warerio plummets from his cloud. 🎉
+4. After the last bar the cage crashes down, the princess runs out, and Warerio plummets from his cloud. 🎉
 
 If the hearts run out, only the current round restarts.
 
@@ -42,7 +42,7 @@ All the learning content lives in **`riddles.js`** – no other file needs to be
 
 * `DEVICES` – the codex entries (name, definition, example sentence)
 * `LEVEL_RIDDLES` – two riddles for each of the three levels (one is chosen at random)
-* `BOSS_RIDDLES` – the seven boss spells
+* `BOSS_RIDDLES` – the boss spells (the cage has one bar per riddle, so add or remove riddles freely)
 
 ```js
 { device: 'simile',

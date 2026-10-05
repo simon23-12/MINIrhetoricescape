@@ -488,13 +488,15 @@ function drawMap() {
 /* ---------- boss battle ---------- */
 const B = {};
 const WORDS = ['BORING', 'BLAND', 'DULL', 'YAWN', 'CLICHÉ', 'MEH', 'SNORE', 'SO-SO'];
-const BOSS_INTRO = ['Hahaha! You solved my little riddles… how ADORABLE!', 'Princess Prosa is locked in my CAGE OF CLICHÉS. Seven bars. Seven riddle spells!', 'Dodge my DULL WORDS, answer my spells… if you can!'];
+const BOSS_INTRO = ['Hahaha! You solved my little riddles… how ADORABLE!', 'Princess Prosa is locked in my CAGE OF CLICHÉS. One bar for every riddle spell!', 'Dodge my DULL WORDS, answer my spells… if you can!'];
 const CAGE = { x: 330, top: 70, w: 130, h: 120 };
+const NB = BOSS_RIDDLES.length;                          // rounds = cage bars = riddles
 const ROUND_DUR = [330, 340, 350, 360, 370, 380, 390], BOMB_EVERY = [76, 68, 62, 56, 50, 46, 42];
+const D = r => Math.round(r * 6 / Math.max(1, NB - 1));   // spread the difficulty tables over however many rounds there are
 function startBoss() {
   G.L = makeLevel(ARENA_DEF); G.theme = THEMES.castle; G.cam = 0; G.parts = []; G.enemies = []; G.items = []; G.hearts = MAXH;
   G.p = newPlayer(70, 12 * T - 32); G.shake = 0;
-  Object.assign(B, { round: 0, bars: Array(7).fill(true), phase: 'intro', timer: 0, bombs: [], warns: [], waves: [], blasts: [], waveWarn: 0, spawnT: 0, wx: 640, wy: 170, wshake: 0, wflash: 0,
+  Object.assign(B, { round: 0, bars: Array(NB).fill(true), phase: 'intro', timer: 0, bombs: [], warns: [], waves: [], blasts: [], waveWarn: 0, spawnT: 0, wx: 640, wy: 170, wshake: 0, wflash: 0,
     hammer: null, bubble: '', bubbleT: 0, cageDy: 0, princess: null, gone: false });
   setMode('boss');
 }
@@ -524,9 +526,9 @@ function updBoss() {
     if (B.timer > 80) { B.phase = 'dodge'; B.timer = 0; }
   } else if (ph === 'dodge' || ph === 'cast') {
     if (ph === 'dodge') {
-      if (--B.spawnT <= 0) { B.spawnT = BOMB_EVERY[r]; lobBomb(); if (r >= 4) lobBomb(Math.random() < 0.5 ? -110 : 110); }
-      if (r >= 3) { if (B.waveWarn > 0) { if (--B.waveWarn === 0) B.waves.push({ x: W + 40, w: 60, h: 24 }); } else if (B.timer % 170 === 100) { B.waveWarn = 50; Sfx.warn(); } }
-      if (B.timer >= ROUND_DUR[r]) { B.phase = 'cast'; B.timer = 0; B.waves = []; B.waveWarn = 0; B.bubble = 'Riddle spell… TIME!'; B.bubbleT = 80; }
+      if (--B.spawnT <= 0) { B.spawnT = BOMB_EVERY[D(r)]; lobBomb(); if (D(r) >= 4) lobBomb(Math.random() < 0.5 ? -110 : 110); }
+      if (D(r) >= 3) { if (B.waveWarn > 0) { if (--B.waveWarn === 0) B.waves.push({ x: W + 40, w: 60, h: 24 }); } else if (B.timer % 170 === 100) { B.waveWarn = 50; Sfx.warn(); } }
+      if (B.timer >= ROUND_DUR[D(r)]) { B.phase = 'cast'; B.timer = 0; B.waves = []; B.waveWarn = 0; B.bubble = 'Riddle spell… TIME!'; B.bubbleT = 80; }
     } else if (B.timer > 85 && !B.bombs.length && !B.waves.length) { B.phase = 'riddle'; castSpell(); }
     // hazards
     for (const b of B.bombs) {
@@ -546,11 +548,11 @@ function updBoss() {
     if (h.t === 38) {
       B.wflash = 34; B.wshake = 46; B.bars[r] = false; Sfx.bossHit(); G.shake = 16;
       burst(B.wx, B.wy, '#ffd23f', 26, 5);
-      const bx = CAGE.x - CAGE.w / 2 + (r + 0.5) * CAGE.w / 7; burst(bx, CAGE.top + 60, '#cfcfe8', 16, 4);
+      const bx = CAGE.x - CAGE.w / 2 + (r + 0.5) * CAGE.w / NB; burst(bx, CAGE.top + 60, '#cfcfe8', 16, 4);
       floatText(CAGE.x, CAGE.top - 18, DEVICES[BOSS_RIDDLES[r].device].name.toUpperCase() + '!', '#ffd23f', 11);
       B.bubble = BOSS_HIT_LINES[r]; B.bubbleT = 100;
     }
-    if (h.t > 125) { if (r >= 6) { B.phase = 'defeat'; B.timer = 0; B.fall = 0; } else startRound(r + 1); }
+    if (h.t > 125) { if (r >= NB - 1) { B.phase = 'defeat'; B.timer = 0; B.fall = 0; } else startRound(r + 1); }
   } else if (ph === 'defeat') {
     const k = B.timer;
     if (k === 1) { B.bubble = 'My words… have no POWER…!'; B.bubbleT = 150; }
@@ -569,7 +571,7 @@ function updBoss() {
 function castSpell() {
   const r = BOSS_RIDDLES[B.round];
   G.p.vx = 0; B.bubbleT = 0;
-  openRiddle({ tag: `WARERIO’S RIDDLE SPELL · ROUND ${B.round + 1}/7`, riddle: r,
+  openRiddle({ tag: `WARERIO’S RIDDLE SPELL · ROUND ${B.round + 1}/${NB}`, riddle: r,
     onSolved() { B.phase = 'strike'; B.timer = 0; B.hammer = { t: 0, sx: G.p.x + 10, sy: G.p.y, x: G.p.x, y: G.p.y, name: DEVICES[r.device].name }; Sfx.flag(); },
     onDead() { B.phase = 'failwait'; failLevel(); } });
 }
@@ -597,7 +599,7 @@ function drawCage() {
   if (B.cageDy === 0) { ctx.fillStyle = '#8a8a9a'; for (let y = 0; y < y0 - 8; y += 10) ctx.fillRect(CAGE.x - 2, y, 4, 7); }
   ctx.fillStyle = 'rgba(20,10,30,.6)'; ctx.fillRect(x0, y0, CAGE.w, CAGE.h);
   if (!B.princess) drawPrincess(CAGE.x, y1 - 8, G.t, true, 1);
-  for (let i = 0; i < 7; i++) if (B.bars[i]) { const bx = x0 + (i + 0.5) * CAGE.w / 7; ctx.fillStyle = '#2f2f40'; ctx.fillRect(bx - 4, y0, 8, CAGE.h); ctx.fillStyle = '#a8a8c4'; ctx.fillRect(bx - 3, y0, 3, CAGE.h); }
+  for (let i = 0; i < NB; i++) if (B.bars[i]) { const bx = x0 + (i + 0.5) * CAGE.w / NB; ctx.fillStyle = '#2f2f40'; ctx.fillRect(bx - 4, y0, 8, CAGE.h); ctx.fillStyle = '#a8a8c4'; ctx.fillRect(bx - 3, y0, 3, CAGE.h); }
   ctx.fillStyle = '#000'; ctx.fillRect(x0 - 8, y0 - 10, CAGE.w + 16, 14); ctx.fillRect(x0 - 8, y1 - 4, CAGE.w + 16, 14);
   ctx.fillStyle = '#ffcf33'; ctx.fillRect(x0 - 6, y0 - 8, CAGE.w + 12, 10); ctx.fillRect(x0 - 6, y1 - 2, CAGE.w + 12, 10);
   ctx.fillStyle = '#fff6a8'; ctx.fillRect(x0 - 6, y0 - 8, CAGE.w + 12, 3);
@@ -657,10 +659,10 @@ function drawBoss() {
   drawHUD(true);
   // boss bar
   const bx = 360, bw = 250; txt('WARERIO', bx - 10, 24, 9, '#ff9aa8', 'right');
-  for (let i = 0; i < 7; i++) { ctx.fillStyle = '#000'; ctx.fillRect(bx + i * (bw / 7) - 1, 12, bw / 7 + 1, 14); ctx.fillStyle = B.bars[6 - i] ? '#ff3b5c' : '#3c2a4d'; ctx.fillRect(bx + i * (bw / 7) + 1, 14, bw / 7 - 3, 10); }
-  txt(`ROUND ${Math.min(B.round + 1, 7)}/7`, 24, 52, 9, '#ffd23f', 'left');
+  for (let i = 0; i < NB; i++) { ctx.fillStyle = '#000'; ctx.fillRect(bx + i * (bw / NB) - 1, 12, bw / NB + 1, 14); ctx.fillStyle = B.bars[NB - 1 - i] ? '#ff3b5c' : '#3c2a4d'; ctx.fillRect(bx + i * (bw / NB) + 1, 14, bw / NB - 3, 10); }
+  txt(`ROUND ${Math.min(B.round + 1, NB)}/${NB}`, 24, 52, 9, '#ffd23f', 'left');
   if (B.phase === 'ready') { const a = clamp(Math.min(B.timer / 15, (80 - B.timer) / 15), 0, 1); ctx.globalAlpha = a; txt(`ROUND ${B.round + 1}`, 400, 238, 26, '#ffd23f', 'center'); txt('Dodge the Dull Words!', 400, 266, 10, '#fff', 'center'); ctx.globalAlpha = 1; }
-  if (B.phase === 'dodge') { const f = 1 - B.timer / ROUND_DUR[B.round]; ctx.fillStyle = '#000'; ctx.fillRect(250, 36, 300, 8); ctx.fillStyle = '#9fe3ff'; ctx.fillRect(252, 38, 296 * f, 4); }
+  if (B.phase === 'dodge') { const f = 1 - B.timer / ROUND_DUR[D(B.round)]; ctx.fillStyle = '#000'; ctx.fillRect(250, 36, 300, 8); ctx.fillStyle = '#9fe3ff'; ctx.fillRect(252, 38, 296 * f, 4); }
   if (B.phase === 'intro') txt(IS_TOUCH ? 'Tap ▶ skip' : 'Enter / Space ▶ skip', 400, 300, 8, '#fff', 'center');
 }
 
