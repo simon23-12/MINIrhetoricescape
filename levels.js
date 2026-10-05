@@ -39,8 +39,8 @@ function makeLevel(def) {
 }
 
 const LEVEL_DEFS = [
-  /* ---------- 1 · Alliteration Meadow ---------- */
-  { name: 'Alliteration Meadow', device: 'alliteration', theme: 'meadow', cols: 90, build(a) {
+  /* ---------- 1 · Sunny Meadow (riddle: alliteration) ---------- */
+  { name: 'Sunny Meadow', device: 'alliteration', theme: 'meadow', cols: 90, build(a) {
       a.floor([[26, 2], [48, 3], [68, 2]]);
       a.coins(6, 10, 4);
       a.blocks(11, 8); a.q(12, 8, 'scroll'); a.blocks(13, 8); a.coins(11, 7, 3);
@@ -60,8 +60,8 @@ const LEVEL_DEFS = [
       a.gate(84);
   } },
 
-  /* ---------- 2 · Simile Shore ---------- */
-  { name: 'Simile Shore', device: 'simile', theme: 'shore', cols: 100, build(a) {
+  /* ---------- 2 · Sunset Beach (riddle: simile) ---------- */
+  { name: 'Sunset Beach', device: 'simile', theme: 'shore', cols: 100, build(a) {
       a.floor([[22, 3], [44, 3], [60, 3], [78, 3]]);
       a.coins(6, 10, 3);
       a.plat(10, 9, 3); a.coins(10, 8, 3);
@@ -81,8 +81,8 @@ const LEVEL_DEFS = [
       a.gate(95);
   } },
 
-  /* ---------- 3 · Metaphor Mountains ---------- */
-  { name: 'Metaphor Mountains', device: 'metaphor', theme: 'peaks', cols: 105, build(a) {
+  /* ---------- 3 · Frosty Peaks (riddle: metaphor) ---------- */
+  { name: 'Frosty Peaks', device: 'metaphor', theme: 'peaks', cols: 105, build(a) {
       a.floor([[20, 3], [40, 4], [58, 3], [76, 4], [90, 3]]);
       a.pillar(8, 1); a.pillar(9, 2); a.pillar(10, 3); a.pillar(11, 2); a.pillar(12, 1);
       a.coins(10, 8, 1); a.coins(5, 10, 2);
@@ -104,101 +104,25 @@ const LEVEL_DEFS = [
       a.gate(100);
   } },
 
-  /* ---------- 4 · Personification Forest ---------- */
-  { name: 'Personification Forest', device: 'personification', theme: 'forest', cols: 110, build(a) {
-      a.floor([[18, 3], [34, 10], [58, 3], [72, 4], [90, 3]]);
+  /* ---------- 4 · Warerio's Castle (ends in the boss battle) ---------- */
+  { name: 'Warerio’s Castle', device: 'boss', theme: 'castle', cols: 105, build(a) {
+      a.floor([[14, 3], [28, 4], [44, 5], [60, 4], [78, 3]]);
       a.coins(5, 10, 3);
-      a.enemy('blot', 8); a.enemy('blot', 12);
-      a.arc(18, 10, 3);
-      a.enemy('bat', 25, 8); a.enemy('spike', 30);
-      a.plat(35, 10, 2); a.plat(38, 9, 2); a.plat(41, 10, 2);
-      a.coins(35, 9, 2); a.coins(38, 8, 2); a.coins(41, 9, 2);
-      a.enemy('blot', 47);
-      a.flag(50);
-      a.enemy('blot', 54);
-      a.arc(58, 10, 3);
-      a.blocks(62, 8); a.q(63, 8, 'scroll'); a.blocks(64, 8);
-      a.enemy('blot', 62 + 5); a.enemy('spike', 69);
-      a.plat(73, 9, 2); a.arc(72, 10, 4);
-      a.enemy('blot', 79); a.enemy('spike', 82); a.pillar(85, 2); a.enemy('bat', 87, 8);
-      a.arc(90, 10, 3);
-      a.enemy('blot', 96);
-      a.flag(98);
-      a.q(100, 8, 'coin');
-      a.gate(104);
-  } },
-
-  /* ---------- 5 · Hyperbole Desert ---------- */
-  { name: 'Hyperbole Desert', device: 'hyperbole', theme: 'desert', cols: 115, build(a) {
-      a.floor([[16, 3], [30, 4], [48, 4], [66, 4], [82, 3], [96, 4]]);
-      a.pillar(9, 3); a.enemy('blot', 5); a.enemy('blot', 12);
-      a.arc(16, 10, 3);
-      a.enemy('big', 24);
-      a.plat(31, 9, 2); a.arc(30, 10, 4);
-      a.q(36, 8, 'scroll'); a.blocks(35, 8); a.blocks(37, 8);
-      a.enemy('blot', 36); a.enemy('big', 41);
-      a.flag(43);
-      a.plat(49, 9, 2); a.arc(48, 10, 4);
-      a.pillar(55, 3, 2); a.enemy('bat', 60, 8); a.enemy('blot', 62);
-      a.plat(67, 9, 2); a.arc(66, 10, 4);
-      a.enemy('big', 74); a.pillar(79, 3);
-      a.arc(82, 10, 3);
-      a.enemy('blot', 87); a.enemy('big', 91);
-      a.plat(97, 9, 2); a.arc(96, 10, 4);
-      a.flag(102);
-      a.enemy('blot', 104);
-      a.gate(109);
-  } },
-
-  /* ---------- 6 · Onomatopoeia Storm ---------- */
-  { name: 'Onomatopoeia Storm', device: 'onomatopoeia', theme: 'storm', cols: 120, build(a) {
-      a.floor([[14, 3], [28, 4], [42, 3], [56, 4], [70, 4], [84, 3], [98, 4]]);
-      a.enemy('blot', 8); a.coins(5, 10, 3);
+      a.enemy('blot', 7);
       a.arc(14, 10, 3);
-      a.enemy('bat', 20, 8); a.enemy('blot', 22);
+      a.enemy('spike', 21);
       a.plat(29, 9, 2); a.arc(28, 10, 4);
       a.q(35, 8, 'scroll'); a.blocks(34, 8); a.blocks(36, 8);
-      a.enemy('bat', 36, 7); a.enemy('blot', 38);
-      a.arc(42, 10, 3);
-      a.flag(46);
-      a.enemy('spike', 50); a.enemy('blot', 53);
-      a.plat(57, 9, 2); a.arc(56, 10, 4);
-      a.enemy('blot', 62); a.enemy('spike', 66);
-      a.plat(71, 9, 2); a.arc(70, 10, 4);
-      a.pillar(76, 2); a.enemy('blot', 79); a.enemy('spike', 81);
-      a.arc(84, 10, 3);
-      a.flag(88);
-      a.enemy('bat', 92, 8); a.enemy('blot', 91); a.q(94, 8, 'coin');
-      a.plat(99, 9, 2); a.arc(98, 10, 4);
-      a.enemy('blot', 106);
-      a.gate(112);
-  } },
-
-  /* ---------- 7 · Warerio's Castle (ends in the boss battle) ---------- */
-  { name: 'Warerio’s Castle', device: 'boss', theme: 'castle', cols: 135, build(a) {
-      a.floor([[12, 3], [26, 4], [40, 5], [56, 4], [70, 3], [84, 5], [100, 4], [114, 3]]);
-      a.coins(5, 10, 3);
-      a.enemy('blot', 6);
-      a.arc(12, 10, 3);
-      a.enemy('spike', 20);
-      a.plat(27, 9, 2); a.arc(26, 10, 4);
-      a.q(33, 8, 'scroll'); a.blocks(32, 8); a.blocks(34, 8);
-      a.enemy('big', 35);
-      a.plat(41, 10, 2); a.plat(44, 10, 1); a.arc(40, 9, 5);
-      a.enemy('bat', 48, 8); a.enemy('blot', 52);
-      a.flag(47);
-      a.plat(57, 9, 2); a.arc(56, 10, 4);
-      a.enemy('blot', 62); a.pillar(65, 3); a.enemy('blot', 67);
-      a.arc(70, 10, 3);
-      a.enemy('bat', 76, 7); a.enemy('big', 79);
-      a.plat(85, 10, 2); a.plat(88, 10, 1); a.arc(84, 9, 5);
-      a.flag(92);
-      a.enemy('spike', 94); a.enemy('blot', 97);
-      a.plat(101, 9, 2); a.arc(100, 10, 4);
-      a.enemy('blot', 108); a.enemy('spike', 111);
-      a.arc(114, 10, 3);
-      a.enemy('big', 120); a.q(122, 8, 'coin');
-      a.gate(128, 'boss');
+      a.enemy('big', 38);
+      a.plat(45, 10, 2); a.plat(48, 10, 1); a.arc(44, 9, 5);
+      a.flag(52);
+      a.enemy('blot', 55); a.enemy('bat', 57, 8);
+      a.plat(61, 9, 2); a.arc(60, 10, 4);
+      a.enemy('blot', 66); a.pillar(70, 3); a.enemy('blot', 74);
+      a.arc(78, 10, 3);
+      a.flag(84);
+      a.enemy('blot', 87); a.enemy('spike', 93); a.q(95, 8, 'coin');
+      a.gate(100, 'boss');
   } }
 ];
 

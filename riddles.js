@@ -15,12 +15,10 @@ const DEVICES = {
   oxymoron:        { name: 'Oxymoron',            icon: '☯️', def: 'Two contradictory words are combined into one expression.', ex: 'Deafening silence, bittersweet, jumbo shrimp.' },
   irony:           { name: 'Irony',               icon: '🙃', def: 'What happens (or is said) is the opposite of what you would expect or what is meant.', ex: 'A fire station burns down.' },
   rhetorical:      { name: 'Rhetorical Question', icon: '❓', def: 'A question asked for effect, not because an answer is expected.', ex: 'Who doesn’t love pizza?' },
-  anaphora:        { name: 'Anaphora',            icon: '🔁', def: 'The same word or phrase is repeated at the beginning of successive sentences or clauses.', ex: 'We shall fight on the beaches, we shall fight on the landing grounds…' },
-  antithesis:      { name: 'Antithesis',          icon: '⚔️', def: 'Opposite ideas are placed next to each other in a balanced sentence structure.', ex: 'United we stand, divided we fall.' },
-  understatement:  { name: 'Understatement',      icon: '🤏', def: 'Something big or serious is deliberately described as small or unimportant.', ex: '“A bit of wind today,” said the sailor in the hurricane.' }
 };
 
-/* Two riddles per level – one of them is picked at random each time. */
+/* Two riddles per level – one of them is picked at random each time.
+   (The level names are neutral on purpose, so they never give away the answer.) */
 const LEVEL_RIDDLES = [
   /* Level 1 – Alliteration */
   [
@@ -54,44 +52,27 @@ const LEVEL_RIDDLES = [
       q: 'I turn one thing into another without any helper words.<br><b>Which sentence is a metaphor?</b>',
       correct: 'The classroom was a zoo.', wrong: ['The classroom was like a zoo.', 'The classroom was so loud the whole planet shook.', 'The bell went ding-dong.'],
       hint: 'Which sentence says something IS something else – without “like” or “as”?' }
-  ],
-  /* Level 4 – Personification */
-  [
-    { device: 'personification',
-      q: 'I give the wind a voice, the sun a smile, the trees the power to sigh.<br>Human actions for things that aren’t human!<br><b>Which device am I?</b>',
-      correct: 'Personification', wrong: ['Onomatopoeia', 'Simile', 'Hyperbole'],
-      hint: 'Who is acting like a PERSON here – although it isn’t one?' },
-    { device: 'personification',
-      q: 'In my world, houses groan, flowers dance and the moon watches over you.<br><b>Which sentence uses personification?</b>',
-      correct: 'The old house groaned and sighed in the night.', wrong: ['The old house was like a cage.', 'The old house was a haunted castle.', 'I’ve waited a million years for this old house!'],
-      hint: 'Find the sentence where a building does something only humans can do.' }
-  ],
-  /* Level 5 – Hyperbole */
-  [
-    { device: 'hyperbole',
-      q: 'I stretch the truth like rubber and turn a mouse into a mountain.<br><i>I’m so hungry I could eat a horse!</i><br><b>Which device am I?</b>',
-      correct: 'Hyperbole', wrong: ['Simile', 'Metaphor', 'Personification'],
-      hint: 'Is it a wild exaggeration – way bigger than reality?' },
-    { device: 'hyperbole',
-      q: 'Nobody believes me, but everybody understands me: I exaggerate on purpose!<br><b>Which sentence is a hyperbole?</b>',
-      correct: 'I’ve been waiting here for a hundred years!', wrong: ['The wind whistled through the trees.', 'She is as fast as a cheetah.', 'The balloon went pop!'],
-      hint: 'Which sentence is impossible to take literally?' }
-  ],
-  /* Level 6 – Onomatopoeia */
-  [
-    { device: 'onomatopoeia',
-      q: '<i>Bang! Splash! Sizzle! Buzz!</i><br>My words sound just like the noises they name.<br><b>Which device am I?</b>',
-      correct: 'Onomatopoeia', wrong: ['Alliteration', 'Metaphor', 'Hyperbole'],
-      hint: 'Say the word out loud – does it SOUND like the thing it describes?' },
-    { device: 'onomatopoeia',
-      q: 'Put your ear to the page and listen closely!<br><b>Which of these words is an onomatopoeia?</b>',
-      correct: 'Sizzle', wrong: ['Table', 'Beautiful', 'Tomorrow'],
-      hint: 'Which word imitates a sound?' }
   ]
 ];
 
-/* Boss battle: seven riddle spells, one per bar of the Cage of Clichés. */
+/* Boss battle: seven riddle spells, one per bar of the Cage of Clichés.
+   Rounds 1-3 revisit the "easy" devices of the classic riddle gates, 4-6 introduce new ones, 7 is a final review. */
 const BOSS_RIDDLES = [
+  { device: 'personification',
+    taunt: 'My castle groans, my walls whisper… can you hear them?',
+    q: 'Warerio cackles: <i>“My castle walls whisper and my torches dance!”</i><br>Things that are not human act like people.<br><b>Which sentence below uses the same device?</b>',
+    correct: 'The old house groaned and sighed in the night.', wrong: ['The old house was like a cage.', 'The old house was a haunted castle.', 'I’ve waited a million years for this old house!'],
+    hint: 'Find the sentence where a building does something only humans can do.' },
+  { device: 'hyperbole',
+    taunt: 'I’ve waited a MILLION years to beat you!',
+    q: 'I stretch the truth like rubber and turn a mouse into a mountain.<br><i>I’m so hungry I could eat a horse!</i><br><b>Which device am I?</b>',
+    correct: 'Hyperbole', wrong: ['Simile', 'Metaphor', 'Personification'],
+    hint: 'Is it a wild exaggeration – way bigger than reality?' },
+  { device: 'onomatopoeia',
+    taunt: 'BOOM! CRASH! Tremble, little plumber!',
+    q: '<i>Bang! Splash! Sizzle! Buzz!</i><br>My words sound just like the noises they name.<br><b>Which device am I?</b>',
+    correct: 'Onomatopoeia', wrong: ['Alliteration', 'Metaphor', 'Hyperbole'],
+    hint: 'Say the word out loud – does it SOUND like the thing it describes?' },
   { device: 'oxymoron',
     taunt: 'Hear the DEAFENING SILENCE of your defeat!',
     q: 'Warerio snarls: <i>“Taste the BITTERSWEET end of your quest!”</i><br>Two opposite words are squeezed together in my name.<br><b>Which device am I?</b>',
@@ -107,21 +88,6 @@ const BOSS_RIDDLES = [
     q: '<i>“Who wouldn’t want to save a princess?” “Are you kidding me?”</i><br>I ask, but I never wait for an answer.<br><b>Which device am I?</b>',
     correct: 'Rhetorical Question', wrong: ['Simile', 'Onomatopoeia', 'Alliteration'],
     hint: 'A question – but nobody expects a real answer.' },
-  { device: 'anaphora',
-    taunt: 'I will win! I will rule! I will WIN!',
-    q: '<i>“We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields…”</i><br>I repeat the same words at the start of sentences or phrases.<br><b>Which device am I?</b>',
-    correct: 'Anaphora', wrong: ['Alliteration', 'Metaphor', 'Hyperbole'],
-    hint: 'Whole WORDS are repeated at the beginning of each part – not just sounds.' },
-  { device: 'antithesis',
-    taunt: 'You stand alone, I fall never!',
-    q: '<i>“United we stand, divided we fall.” “To err is human; to forgive, divine.”</i><br>Opposite ideas, placed in a balanced sentence.<br><b>Which device am I?</b>',
-    correct: 'Antithesis', wrong: ['Oxymoron', 'Simile', 'Onomatopoeia'],
-    hint: 'Two opposite IDEAS in balanced parts of one sentence – not just two squeezed-together words.' },
-  { device: 'understatement',
-    taunt: 'Oh, this? Just a teeny-tiny volcano.',
-    q: 'A hurricane flattens the whole town, and I say: <i>“Looks like a bit of wind today.”</i><br>I make something big sound small.<br><b>Which device am I?</b>',
-    correct: 'Understatement', wrong: ['Hyperbole', 'Metaphor', 'Alliteration'],
-    hint: 'It is the opposite of exaggeration.' },
   { device: 'metaphor',
     taunt: 'This is my FINAL spell! Tremble!',
     q: 'Warerio roars his final threat:<br><i>“Your courage is a tiny candle in my mighty storm!”</i><br><b>Which device is he using?</b>',
@@ -129,6 +95,6 @@ const BOSS_RIDDLES = [
     hint: 'Is there a “like” or “as”? Or is one thing simply called another?' }
 ];
 
-const BOSS_HIT_LINES = ['OUCH! My Oxymoron!', 'ARGH! Not my Irony!', 'WHO… DID… THAT?!', 'My repetition! My repetition!', 'That… was a balanced blow!', 'Barely a scratch! (…it hurts.)', 'NOOOO! Not my storm!'];
+const BOSS_HIT_LINES = ['OW! My poor Personification!', 'That hurt a MILLION times!', 'CRASH! BANG! …OUCH!', 'Oww! That was… terribly good!', 'Oh, how… unexpected. (Irony!)', 'Who dares to hurt the mighty Warerio?!', 'NOOOO! Not my storm!'];
 
 if (typeof module !== 'undefined') module.exports = { DEVICES, LEVEL_RIDDLES, BOSS_RIDDLES };

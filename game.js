@@ -4,7 +4,7 @@
    ------------------------------------------------------------------ */
 (() => {
 'use strict';
-const T = TILE;
+const T = TILE, LAST = LEVEL_DEFS.length - 1;     // index of the final level (the castle with the boss)
 const $ = id => document.getElementById(id);
 const stage = $('stage');
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -33,7 +33,7 @@ let lastTap = 0; document.addEventListener('touchend', e => { const n = Date.now
 
 /* ---------- save ---------- */
 const SAVE_KEY = 'rhetoricescape.v1';
-let save = (() => { try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && typeof s.cleared === 'number') return s; } catch (e) {} return { cleared: 0, codex: {}, won: false }; })();
+let save = (() => { try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && typeof s.cleared === 'number') { s.cleared = Math.min(s.cleared, LEVEL_DEFS.length); return s; } } catch (e) {} return { cleared: 0, codex: {}, won: false }; })();
 const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} };
 
 /* ---------- audio ---------- */
@@ -310,8 +310,8 @@ function updClearing() {
 function finishLevel() {
   const fresh = G.idx + 1 > save.cleared;
   save.cleared = Math.max(save.cleared, G.idx + 1); persist();
-  G.mapAnim = fresh ? { from: G.idx, to: Math.min(G.idx + 1, 6), t: 0 } : null;
-  G.sel = fresh ? Math.min(G.idx + 1, 6) : G.idx;
+  G.mapAnim = fresh ? { from: G.idx, to: Math.min(G.idx + 1, LAST), t: 0 } : null;
+  G.sel = fresh ? Math.min(G.idx + 1, LAST) : G.idx;
   setMode('map');
   toast(`✔ Level ${G.idx + 1} cleared! “${DEVICES[LEVEL_DEFS[G.idx].device].name}” is in your Codex.`);
 }
@@ -347,7 +347,7 @@ function drawPlay() {
     ctx.globalAlpha = a; ctx.fillStyle = 'rgba(10,6,40,.55)'; roundRect(150, 118, 500, 104, 14); ctx.fill();
     txt(`LEVEL ${G.idx + 1}`, 400, 154, 14, '#ffd23f', 'center');
     txt(d.name, 400, 184, 15, '#fff', 'center');
-    if (d.device !== 'boss') txt('Learn: ' + DEVICES[d.device].name, 400, 208, 9, '#9fe3ff', 'center');
+    if (d.device !== 'boss') txt('Reach the riddle gate at the end!', 400, 208, 9, '#9fe3ff', 'center');
     else txt('Beat Warerio – free the princess!', 400, 208, 9, '#ff9aa8', 'center');
     ctx.globalAlpha = 1;
   }
@@ -419,11 +419,11 @@ function openCodex() {
 function closeCodex() { G.codexOpen = false; $('codex').classList.add('hidden'); Sfx.click(); }
 
 /* ---------- world map ---------- */
-const NODES = [[88, 356], [196, 304], [306, 352], [412, 292], [514, 350], [610, 280], [706, 196]];
-const NODE_COL = ['#52c75a', '#f6c46a', '#a98bd9', '#3fa34d', '#e8b878', '#6f78c4', '#b0343f'];
+const NODES = [[110, 350], [280, 298], [468, 346], [706, 196]];
+const NODE_COL = ['#52c75a', '#f6c46a', '#a98bd9', '#b0343f'];
 function updMap() {
   if (G.mapAnim) { G.mapAnim.t++; if (G.mapAnim.t > 70) G.mapAnim = null; return; }
-  const maxSel = Math.min(save.cleared, 6);
+  const maxSel = Math.min(save.cleared, LAST);
   if ((pressed.ArrowRight || pressed.KeyD) && G.sel < maxSel) { G.sel++; Sfx.click(); }
   if ((pressed.ArrowLeft || pressed.KeyA) && G.sel > 0) { G.sel--; Sfx.click(); }
   if (ctl.confirm()) startLevel(G.sel);
@@ -442,9 +442,9 @@ function drawMap() {
   // path
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   const trace = (n) => { ctx.beginPath(); ctx.moveTo(NODES[0][0], NODES[0][1]); for (let i = 1; i <= n; i++) ctx.lineTo(NODES[i][0], NODES[i][1]); ctx.stroke(); };
-  ctx.strokeStyle = '#b08a4a'; ctx.lineWidth = 13; trace(6);
-  ctx.strokeStyle = '#f3dfa8'; ctx.lineWidth = 8; trace(6);
-  if (save.cleared > 0) { ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 5; trace(Math.min(save.cleared, 6)); }
+  ctx.strokeStyle = '#b08a4a'; ctx.lineWidth = 13; trace(LAST);
+  ctx.strokeStyle = '#f3dfa8'; ctx.lineWidth = 8; trace(LAST);
+  if (save.cleared > 0) { ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 5; trace(Math.min(save.cleared, LAST)); }
   // castle (behind node 7)
   const cx = 706, cy = 196;
   ctx.fillStyle = '#4d4a66'; ctx.fillRect(cx - 44, cy - 62, 88, 62); ctx.fillRect(cx - 54, cy - 90, 24, 90); ctx.fillRect(cx + 30, cy - 90, 24, 90); ctx.fillRect(cx - 12, cy - 112, 24, 50);
@@ -455,7 +455,7 @@ function drawMap() {
   txt('W', cx + 10, cy - 139, 7, '#ffd23f', 'center', null);
   drawPrincess(cx + 1, cy - 66, t, true, 0.38);
   // nodes
-  const maxSel = Math.min(save.cleared, 6);
+  const maxSel = Math.min(save.cleared, LAST);
   NODES.forEach(([x, y], i) => {
     const cleared = i < save.cleared, open = i <= save.cleared;
     const pulse = i === G.sel && !G.mapAnim ? Math.sin(t * 0.15) * 2 : 0;
@@ -464,8 +464,8 @@ function drawMap() {
     ctx.fillStyle = open ? (cleared ? '#ffd23f' : NODE_COL[i]) : '#7b7b8c'; ctx.beginPath(); ctx.arc(x, y, 16, 0, TAU); ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(x - 5, y - 7, 7, 4, -0.4, 0, TAU); ctx.fill();
     if (!open) txt('🔒', x, y + 5, 13, '#fff', 'center', null, 'sans-serif');
-    else txt(i === 6 ? '☠' : String(i + 1), x, y + 5, i === 6 ? 14 : 12, cleared ? '#7a4a00' : '#fff', 'center', cleared ? null : '#000', i === 6 ? 'sans-serif' : undefined);
-    if (cleared && i < 6) txt('★', x + 14, y - 12, 12, '#fff', 'center', '#b8860b', 'sans-serif');
+    else txt(i === LAST ? '☠' : String(i + 1), x, y + 5, i === LAST ? 14 : 12, cleared ? '#7a4a00' : '#fff', 'center', cleared ? null : '#000', i === LAST ? 'sans-serif' : undefined);
+    if (cleared && i < LAST) txt('★', x + 14, y - 12, 12, '#fff', 'center', '#b8860b', 'sans-serif');
   });
   // hero marker
   let hx, hy;
@@ -479,7 +479,7 @@ function drawMap() {
   const d = LEVEL_DEFS[G.sel], boss = d.device === 'boss';
   txt(`LEVEL ${G.sel + 1}: ${d.name}`, 34, 412, 10, '#ffd23f', 'left', null);
   ctx.font = '800 14px Nunito, sans-serif'; ctx.fillStyle = '#e8e6ff'; ctx.textAlign = 'left';
-  ctx.fillText(boss ? 'Boss battle! Defeat Warerio and free Princess Prosa.' : `Riddle topic: ${DEVICES[d.device].name} – ${DEVICES[d.device].ex}`, 34, 430);
+  ctx.fillText(boss ? 'Boss battle! Defeat Warerio and free Princess Prosa.' : 'Reach the Riddle Gate at the end – and solve its riddle to pass!', 34, 430);
   const hov = G.mapHover; ctx.fillStyle = hov ? '#fff29a' : '#ffcf33'; roundRect(656, 398, 116, 34, 8); ctx.fill(); ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.stroke();
   txt('PLAY ▶', 714, 420, 10, '#231a00', 'center', null);
   if (maxSel > 0 || true) { ctx.font = '700 11px Nunito, sans-serif'; ctx.fillStyle = '#cfd0ff'; ctx.textAlign = 'right'; ctx.fillText(IS_TOUCH ? 'Tap a level, then PLAY' : '← → choose · Enter play', 640, 430); }
@@ -574,8 +574,8 @@ function castSpell() {
     onDead() { B.phase = 'failwait'; failLevel(); } });
 }
 function showWin() {
-  B.phase = 'win'; save.cleared = 7; save.won = true; persist();
-  const n = Object.keys(save.codex).length;
+  B.phase = 'win'; save.cleared = LEVEL_DEFS.length; save.won = true; persist();
+  const n = Object.keys(DEVICES).filter(k => save.codex[k]).length;
   $('winText').textContent = `Rhetorio and Princess Prosa are reunited and Warerio’s Castle of Clichés crumbles. You collected ${G.coins} coins and unlocked ${n} of ${Object.keys(DEVICES).length} stylistic devices in the Codex. Brilliant rhetoric!`;
   setMode('win'); Sfx.stop(); Sfx.win();
 }
@@ -684,24 +684,24 @@ function drawTitle() {
 function drawAmbient() { if (G.prevMode === 'boss') drawBoss(); else drawPlay(); }
 
 /* ---------- flow / ui wiring ---------- */
-function goMap() { RU.open = false; $('riddle').classList.add('hidden'); G.mapAnim = null; G.sel = clamp(G.sel, 0, Math.min(save.cleared, 6)); setMode('map'); }
+function goMap() { RU.open = false; $('riddle').classList.add('hidden'); G.mapAnim = null; G.sel = clamp(G.sel, 0, Math.min(save.cleared, LAST)); setMode('map'); }
 function newGame() { save = { cleared: 0, codex: {}, won: false }; persist(); G.coins = 0; G.scrolls = 0; G.sel = 0; setMode('story'); }
 $('btnNew').addEventListener('click', () => { Sfx.ensure(); if (save.cleared > 0 && !confirm('Start a new game? Your saved progress will be erased.')) return; newGame(); });
-$('btnCont').addEventListener('click', () => { Sfx.ensure(); G.sel = Math.min(save.cleared, 6); setMode('map'); });
+$('btnCont').addEventListener('click', () => { Sfx.ensure(); G.sel = Math.min(save.cleared, LAST); setMode('map'); });
 $('btnGo').addEventListener('click', () => { G.sel = 0; setMode('map'); });
 $('btnCodex').addEventListener('click', openCodex);
 $('bCodex').addEventListener('click', openCodex);
 $('btnWinCodex').addEventListener('click', openCodex);
 $('btnCodexClose').addEventListener('click', closeCodex);
-$('bMap').addEventListener('click', () => { if (G.mode === 'play' || G.mode === 'boss' || G.mode === 'clearing') { Sfx.click(); G.sel = clamp(G.mode === 'boss' ? 6 : G.idx, 0, 6); goMap(); } });
+$('bMap').addEventListener('click', () => { if (G.mode === 'play' || G.mode === 'boss' || G.mode === 'clearing') { Sfx.click(); G.sel = clamp(G.mode === 'boss' ? LAST : G.idx, 0, LAST); goMap(); } });
 $('bMute').addEventListener('click', () => { Sfx.ensure(); const m = Sfx.toggle(); $('bMute').textContent = m ? '🔇' : '🔊'; if (!m) setMode(G.mode); });
 $('btnRetry').addEventListener('click', () => {
   Sfx.ensure();
   if (G.failCtx === 'boss') { G.hearts = MAXH; G.p = newPlayer(70, 12 * T - 32); G.parts = []; setMode('boss'); startRound(B.round); }
   else startLevel(G.idx);
 });
-$('btnFailMap').addEventListener('click', () => { G.sel = clamp(G.failCtx === 'boss' ? 6 : G.idx, 0, 6); goMap(); });
-$('btnWinMap').addEventListener('click', () => { G.sel = 6; goMap(); });
+$('btnFailMap').addEventListener('click', () => { G.sel = clamp(G.failCtx === 'boss' ? LAST : G.idx, 0, LAST); goMap(); });
+$('btnWinMap').addEventListener('click', () => { G.sel = LAST; goMap(); });
 canvas.addEventListener('pointerdown', e => {
   Sfx.ensure();
   if (G.mode === 'boss' && B.phase === 'intro' && B.timer > 20) { B.timer = (Math.floor(B.timer / 150) + 1) * 150; return; }
@@ -763,5 +763,5 @@ setMode('title');
 requestAnimationFrame(frame);
 
 // tiny debug/test hook (also handy for teachers to jump to a level: RE.start(3))
-window.RE = { start: i => startLevel(i), boss: () => { startBoss(); }, G, B, save: () => save, unlockAll: () => { save.cleared = 6; persist(); } };
+window.RE = { start: i => startLevel(i), boss: () => { startBoss(); }, G, B, save: () => save, unlockAll: () => { save.cleared = LAST; persist(); } };
 })();
